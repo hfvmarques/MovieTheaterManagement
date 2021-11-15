@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using MovieTheatherManagement.Data;
+using MovieTheatherManagement.Installers;
 using MovieTheatherManagement.Options;
 using System;
 using System.Collections.Generic;
@@ -31,22 +32,7 @@ namespace MovieTheatherManagement
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DataContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDatabaseDeveloperPageExceptionFilter();
-
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<DataContext>();
-            services.AddControllersWithViews();
-
-            services.AddMvc(options => options.EnableEndpointRouting = false)
-                .SetCompatibilityVersion(CompatibilityVersion.Latest);
-
-            services.AddSwaggerGen(x =>
-           {
-               x.SwaggerDoc("v1", new OpenApiInfo { Title = "MovieTheatherManagement API", Version = "v1" });
-           });
+            services.InstallServicesInAssembly(Configuration); 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
