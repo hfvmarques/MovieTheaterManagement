@@ -9,7 +9,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using MovieTheatherManagement.Data;
+using MovieTheatherManagement.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +42,11 @@ namespace MovieTheatherManagement
 
             services.AddMvc(options => options.EnableEndpointRouting = false)
                 .SetCompatibilityVersion(CompatibilityVersion.Latest);
+
+            services.AddSwaggerGen(x =>
+           {
+               x.SwaggerDoc("v1", new OpenApiInfo { Title = "MovieTheatherManagement API", Version = "v1" });
+           });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,6 +61,18 @@ namespace MovieTheatherManagement
             {
                 app.UseHsts();
             }
+
+            var swaggerOptions = new SwaggerOptions();
+            Configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOptions);
+
+            app.UseSwagger(option =>
+            {
+                option.RouteTemplate = swaggerOptions.JsonRoute;
+            });
+
+            app.UseSwaggerUI(option =>
+                option.SwaggerEndpoint(swaggerOptions.UiEndpoint, swaggerOptions.Description));
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -67,12 +86,7 @@ namespace MovieTheatherManagement
                 endpoints.MapRazorPages();
             });
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.UseMvc();
         }
     }
 }
