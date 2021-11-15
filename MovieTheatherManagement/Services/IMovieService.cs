@@ -13,5 +13,7 @@ namespace MovieTheatherManagement.Services
         Movie GetMovieById(Guid movieId);
 
         bool UpdateMovie(Movie movieToUpdate);
+
+        bool DeleteMovie(Guid movieId);
     }
 }

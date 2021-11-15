@@ -20,10 +20,20 @@ namespace MovieTheatherManagement.Services
                     Id = Guid.NewGuid(),
                     Image = Guid.NewGuid().ToString(),
                     Title = Guid.NewGuid().ToString(),
-                    Description = Guid.NewGuid().ToString(),
-                    Duration = new TimeSpan(1, 30, 0)
+                    Description = Guid.NewGuid().ToString()
                 });
             }
+        }
+
+        public bool DeleteMovie(Guid movieId)
+        {
+            var movie = GetMovieById(movieId);
+
+            if (movie == null)
+                return false;
+
+            _movies.Remove(movie);
+            return true;
         }
 
         public Movie GetMovieById(Guid movieId)

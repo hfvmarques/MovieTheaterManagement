@@ -35,14 +35,24 @@ namespace MovieTheatherManagement.Controllers.V1
                 Id = movieId,
                 Image = request.Image,
                 Title = request.Title,
-                Description = request.Description,
-                Duration = request.Duration
+                Description = request.Description
             };
 
             var updated = _movieService.UpdateMovie(movie);
 
             if (updated)
                 return Ok(movie);
+
+            return NotFound();
+        }
+
+        [HttpDelete(ApiRoutes.Movies.Delete)]
+        public IActionResult Delete([FromRoute] Guid movieId)
+        {
+            var deleted = _movieService.DeleteMovie(movieId);
+
+            if (deleted)
+                return NoContent();
 
             return NotFound();
         }
