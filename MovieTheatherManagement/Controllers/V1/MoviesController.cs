@@ -4,6 +4,7 @@ using MovieTheatherManagement.Contracts.V1;
 using MovieTheatherManagement.Contracts.V1.Requests;
 using MovieTheatherManagement.Contracts.V1.Responses;
 using MovieTheatherManagement.Domain;
+using MovieTheatherManagement.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,21 +14,48 @@ namespace MovieTheatherManagement.Controllers.V1
 {
     public class MoviesController : Controller
     {
-        private List<Movie> _movies;
+        private readonly IMovieService _movieService;
 
-        public MoviesController()
+        public MoviesController(IMovieService movieService)
         {
-            _movies = new List<Movie>();
-            for (var i=0; i<5;i++)
-            {
-                _movies.Add(new Movie { Id = Guid.NewGuid().ToString() });
-            }
+            _movieService = movieService;
         }
 
         [HttpGet(ApiRoutes.Movies.GetAll)]
         public IActionResult GetAll()
         {
-            return Ok(_movies);
+            return Ok(_movieService.GetMovies());
+        }
+
+        [HttpPut(ApiRoutes.Movies.Update)]
+        public IActionResult Update([FromRoute] Guid movieId, [FromBody] UpdateMovieRequest request)
+        {
+            var movie = new Movie
+            { 
+                Id = movieId,
+                Image = request.Image,
+                Title = request.Title,
+                Description = request.Description,
+                Duration = request.Duration
+            };
+
+            var updated = _movieService.UpdateMovie(movie);
+
+            if (updated)
+                return Ok(movie);
+
+            return NotFound();
+        }
+
+        [HttpGet(ApiRoutes.Movies.Get)]
+        public IActionResult Get([FromRoute]Guid movieId)
+        {
+            var movie = _movieService.GetMovieById(movieId);
+
+            if (movie == null)
+                return NotFound();
+
+            return Ok(movie);
         }
 
         [HttpPost(ApiRoutes.Movies.Create)]
@@ -35,13 +63,13 @@ namespace MovieTheatherManagement.Controllers.V1
         {
             var movie = new Movie { Id = movieRequest.Id };
 
-            if (string.IsNullOrEmpty(movie.Id))
-                movie.Id = Guid.NewGuid().ToString();
+            if (movie.Id != Guid.Empty)
+                movie.Id = Guid.NewGuid();
 
-            _movies.Add(movie);
+            _movieService.GetMovies().Add(movie);
 
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
-            var locationUri = baseUrl + "/" + ApiRoutes.Movies.Get.Replace("{movieId}", movie.Id);
+            var locationUri = baseUrl + "/" + ApiRoutes.Movies.Get.Replace("{movieId}", movie.Id.ToString());
 
             var response = new MovieResponse { Id = movie.Id };
             return Created(locationUri, response);

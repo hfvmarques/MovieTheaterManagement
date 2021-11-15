@@ -15,6 +15,10 @@ namespace MovieTheatherManagement.Contracts.V1
         {
             public const string GetAll = Base + "/movies";
 
+            public const string Update = Base + "/movies/{movieId}";
+
+            public const string Delete = Base + "/movies/{movieId}";
+
             public const string Get = Base + "/movies/{movieId}";
 
             public const string Create = Base + "/movies";

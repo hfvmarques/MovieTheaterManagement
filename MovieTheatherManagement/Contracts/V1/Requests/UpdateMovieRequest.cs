@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
-namespace MovieTheatherManagement.Domain
+namespace MovieTheatherManagement.Contracts.V1.Requests
 {
-    public class Movie
+    public class UpdateMovieRequest
     {
-        public Guid Id { get; set; }
         public string Image { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }

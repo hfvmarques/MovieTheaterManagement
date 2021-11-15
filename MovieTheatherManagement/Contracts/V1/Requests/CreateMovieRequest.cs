@@ -7,6 +7,6 @@ namespace MovieTheatherManagement.Contracts.V1.Requests
 {
     public class CreateMovieRequest
     {
-        public string Id { get; set; }
+        public Guid Id { get; set; }
     }
 }
