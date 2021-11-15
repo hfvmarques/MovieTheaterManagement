@@ -14,6 +14,10 @@ namespace MovieTheatherManagement.Contracts.V1
         public static class Movies
         {
             public const string GetAll = Base + "/movies";
+
+            public const string Get = Base + "/movies/{movieId}";
+
+            public const string Create = Base + "/movies";
         }
     }
 }
