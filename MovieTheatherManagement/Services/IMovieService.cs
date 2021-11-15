@@ -8,12 +8,14 @@ namespace MovieTheatherManagement.Services
 {
     public interface IMovieService
     {
-        List<Movie> GetMovies();
+        Task<List<Movie>> GetMoviesAsync();
 
-        Movie GetMovieById(Guid movieId);
+        Task<Movie> GetMovieByIdAsync(Guid movieId);
 
-        bool UpdateMovie(Movie movieToUpdate);
+        Task<bool> CreateMovieAsync(Movie movie);
 
-        bool DeleteMovie(Guid movieId);
+        Task<bool> UpdateMovieAsync(Movie movieToUpdate);
+
+        Task<bool> DeleteMovieAsync(Guid movieId);
     }
 }

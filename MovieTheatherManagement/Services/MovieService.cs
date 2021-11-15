@@ -1,4 +1,6 @@
-﻿using MovieTheatherManagement.Domain;
+﻿using Microsoft.EntityFrameworkCore;
+using MovieTheatherManagement.Data;
+using MovieTheatherManagement.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,54 +10,46 @@ namespace MovieTheatherManagement.Services
 {
     public class MovieService : IMovieService
     {
-        private readonly List<Movie> _movies;
-
-        public MovieService()
+        private readonly DataContext _dataContext;
+        public MovieService(DataContext dataContext)
         {
-            _movies = new List<Movie>();
-            for (var i = 0; i < 5; i++)
-            {
-                _movies.Add(new Movie
-                {
-                    Id = Guid.NewGuid(),
-                    Image = Guid.NewGuid().ToString(),
-                    Title = Guid.NewGuid().ToString(),
-                    Description = Guid.NewGuid().ToString()
-                });
-            }
+            _dataContext = dataContext;
         }
 
-        public bool DeleteMovie(Guid movieId)
+        public async Task<List<Movie>> GetMoviesAsync()
         {
-            var movie = GetMovieById(movieId);
+            return await _dataContext.Movies.ToListAsync();
+        }
+
+        public async Task<Movie> GetMovieByIdAsync(Guid movieId)
+        {
+            return await _dataContext.Movies.SingleOrDefaultAsync(x => x.Id == movieId);
+        }
+
+        public async Task<bool> CreateMovieAsync(Movie movie)
+        {
+            await _dataContext.Movies.AddAsync(movie);
+            var createdMovie = await _dataContext.SaveChangesAsync();
+            return createdMovie > 0;
+        }
+
+        public async Task<bool> UpdateMovieAsync(Movie movieToUpdate)
+        {
+            _dataContext.Movies.Update(movieToUpdate);
+            var updatedMovie = await _dataContext.SaveChangesAsync();
+            return updatedMovie > 0;
+        }
+
+        public async Task<bool> DeleteMovieAsync(Guid movieId)
+        {
+            var movie = await GetMovieByIdAsync(movieId);
 
             if (movie == null)
                 return false;
 
-            _movies.Remove(movie);
-            return true;
-        }
-
-        public Movie GetMovieById(Guid movieId)
-        {
-            return _movies.SingleOrDefault(x => x.Id == movieId);
-        }
-
-        public List<Movie> GetMovies()
-        {
-            return _movies;
-        }
-
-        public bool UpdateMovie(Movie movieToUpdate)
-        {
-            var exists = GetMovieById(movieToUpdate.Id) != null;
-
-            if (!exists)
-                return false;
-
-            var index = _movies.FindIndex(x => x.Id == movieToUpdate.Id);
-            _movies[index] = movieToUpdate;
-            return true;
+            _dataContext.Movies.Remove(movie);
+            var deletedMovie = await _dataContext.SaveChangesAsync();
+            return deletedMovie > 0;
         }
     }
 }

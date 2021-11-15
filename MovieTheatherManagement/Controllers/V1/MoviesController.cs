@@ -22,13 +22,13 @@ namespace MovieTheatherManagement.Controllers.V1
         }
 
         [HttpGet(ApiRoutes.Movies.GetAll)]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAllAsync()
         {
-            return Ok(_movieService.GetMovies());
+            return Ok(await _movieService.GetMoviesAsync());
         }
 
         [HttpPut(ApiRoutes.Movies.Update)]
-        public IActionResult Update([FromRoute] Guid movieId, [FromBody] UpdateMovieRequest request)
+        public async Task<IActionResult> UpdateAsync([FromRoute] Guid movieId, [FromBody] UpdateMovieRequest request)
         {
             var movie = new Movie
             { 
@@ -38,7 +38,7 @@ namespace MovieTheatherManagement.Controllers.V1
                 Description = request.Description
             };
 
-            var updated = _movieService.UpdateMovie(movie);
+            var updated = await _movieService.UpdateMovieAsync(movie);
 
             if (updated)
                 return Ok(movie);
@@ -47,9 +47,9 @@ namespace MovieTheatherManagement.Controllers.V1
         }
 
         [HttpDelete(ApiRoutes.Movies.Delete)]
-        public IActionResult Delete([FromRoute] Guid movieId)
+        public async Task<IActionResult> DeleteAsync([FromRoute] Guid movieId)
         {
-            var deleted = _movieService.DeleteMovie(movieId);
+            var deleted = await _movieService.DeleteMovieAsync(movieId);
 
             if (deleted)
                 return NoContent();
@@ -58,9 +58,9 @@ namespace MovieTheatherManagement.Controllers.V1
         }
 
         [HttpGet(ApiRoutes.Movies.Get)]
-        public IActionResult Get([FromRoute]Guid movieId)
+        public async Task<IActionResult> GetAsync([FromRoute]Guid movieId)
         {
-            var movie = _movieService.GetMovieById(movieId);
+            var movie = await _movieService.GetMovieByIdAsync(movieId);
 
             if (movie == null)
                 return NotFound();
@@ -69,14 +69,16 @@ namespace MovieTheatherManagement.Controllers.V1
         }
 
         [HttpPost(ApiRoutes.Movies.Create)]
-        public IActionResult Create([FromBody] CreateMovieRequest movieRequest)
+        public async Task<IActionResult> CreateAsync([FromBody] CreateMovieRequest movieRequest)
         {
-            var movie = new Movie { Id = movieRequest.Id };
+            var movie = new Movie 
+            { 
+                Image = movieRequest.Image,
+                Title = movieRequest.Title,
+                Description = movieRequest.Description
+            };
 
-            if (movie.Id != Guid.Empty)
-                movie.Id = Guid.NewGuid();
-
-            _movieService.GetMovies().Add(movie);
+            await _movieService.CreateMovieAsync(movie);
 
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
             var locationUri = baseUrl + "/" + ApiRoutes.Movies.Get.Replace("{movieId}", movie.Id.ToString());

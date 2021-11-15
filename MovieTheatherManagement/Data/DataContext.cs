@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using MovieTheatherManagement.Domain;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,5 +13,7 @@ namespace MovieTheatherManagement.Data
             : base(options)
         {
         }
+
+        public DbSet<Movie> Movies { get; set; }
     }
 }

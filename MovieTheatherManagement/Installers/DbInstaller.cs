@@ -23,7 +23,7 @@ namespace MovieTheatherManagement.Installers
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<DataContext>();
 
-            services.AddSingleton<IMovieService, MovieService>();
+            services.AddScoped<IMovieService, MovieService>();
         }
     }
 }
