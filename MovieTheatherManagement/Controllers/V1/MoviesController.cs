@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MovieTheatherManagement.Contracts;
 using MovieTheatherManagement.Contracts.V1;
 using MovieTheatherManagement.Contracts.V1.Requests;
@@ -12,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace MovieTheatherManagement.Controllers.V1
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class MoviesController : Controller
     {
         private readonly IMovieService _movieService;
