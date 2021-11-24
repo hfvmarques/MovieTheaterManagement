@@ -60,11 +60,11 @@ namespace MovieTheatherManagement
                 option.SwaggerEndpoint(swaggerOptions.UiEndpoint, swaggerOptions.Description));
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            app.UseStaticFiles();            
 
-            app.UseAuthentication();            
+            app.UseRouting();
 
-            app.UseRouting();  
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

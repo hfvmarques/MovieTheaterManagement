@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MovieTheatherManagement.Data;
+using MovieTheatherManagement.Options;
 using MovieTheatherManagement.Services;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,8 @@ namespace MovieTheatherManagement.Installers
         {
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<DataContext>();
+
+            services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
             services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(
